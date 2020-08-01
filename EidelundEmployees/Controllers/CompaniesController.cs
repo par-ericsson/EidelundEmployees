@@ -20,6 +20,7 @@ namespace EidelundEmployees.Controllers
         private readonly IRepositoryManager _repository;
         private readonly ILoggerManager _logger;
         private readonly IMapper _mapper;
+
         public CompaniesController(IRepositoryManager repository, ILoggerManager logger, IMapper mapper)
         {
             _repository = repository;
@@ -27,16 +28,17 @@ namespace EidelundEmployees.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("{id}", Name = "CompanyById")]
+        [HttpGet]
         public IActionResult GetCompanies()
         {
             var companies = _repository.Company.GetAllCompanies(trackChanges: false);
+
             var companiesDto = _mapper.Map<IEnumerable<CompanyDto>>(companies);
 
             return Ok(companiesDto);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "CompanyById")]
         public IActionResult GetCompany(Guid id)
         {
             var company = _repository.Company.GetCompany(id, trackChanges: false);
@@ -52,6 +54,27 @@ namespace EidelundEmployees.Controllers
             }
         }
 
+        [HttpGet("collection/({ids})", Name = "CompanyCollection")]
+        public IActionResult GetCompanyCollection([ModelBinder(BinderType = typeof(ArrayModelBinder))]IEnumerable<Guid> ids)
+        {
+            if (ids == null)
+            {
+                _logger.LogError("Parameter ids is null");
+                return BadRequest("Parameter ids is null");
+            }
+
+            var companyEntities = _repository.Company.GetByIds(ids, trackChanges: false);
+
+            if (ids.Count() != companyEntities.Count())
+            {
+                _logger.LogError("Some ids are not valid in a collection");
+                return NotFound();
+            }
+
+            var companiesToReturn = _mapper.Map<IEnumerable<CompanyDto>>(companyEntities);
+            return Ok(companiesToReturn);
+        }
+
         [HttpPost]
         public IActionResult CreateCompany([FromBody]CompanyForCreationDto company)
         {
@@ -59,6 +82,12 @@ namespace EidelundEmployees.Controllers
             {
                 _logger.LogError("CompanyForCreationDto object sent from client is null.");
                 return BadRequest("CompanyForCreationDto object is null");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                _logger.LogError("Invalid model state for the CompanyForCreationDto object");
+                return UnprocessableEntity(ModelState);
             }
 
             var companyEntity = _mapper.Map<Company>(company);
@@ -71,25 +100,6 @@ namespace EidelundEmployees.Controllers
             return CreatedAtRoute("CompanyById", new { id = companyToReturn.Id }, companyToReturn);
         }
 
-        [HttpGet("collection/({ids})", Name = "CompanyCollection")]
-        public IActionResult GetCompanyCollection([ModelBinder(BinderType = typeof(ArrayModelBinder))]IEnumerable<Guid> ids)
-        {
-            if (ids == null)
-            {
-                _logger.LogError("Parameter ids is null");
-                return BadRequest("Parameter ids is null");
-            }
-            var companyEntities = _repository.Company.GetByIds(ids, trackChanges: false);
-            if (ids.Count() != companyEntities.Count())
-            {
-                _logger.LogError("Some ids are not valid in a collection");
-                return NotFound();
-            }
-            var companiesToReturn = _mapper.Map<IEnumerable<CompanyDto>>(companyEntities);
-
-            return Ok(companiesToReturn);
-        }
-
         [HttpPost("collection")]
         public IActionResult CreateCompanyCollection([FromBody] IEnumerable<CompanyForCreationDto> companyCollection)
         {
@@ -98,6 +108,7 @@ namespace EidelundEmployees.Controllers
                 _logger.LogError("Company collection sent from client is null.");
                 return BadRequest("Company collection is null");
             }
+
             var companyEntities = _mapper.Map<IEnumerable<Company>>(companyCollection);
             foreach (var company in companyEntities)
             {
@@ -121,6 +132,7 @@ namespace EidelundEmployees.Controllers
                 _logger.LogInfo($"Company with id: {id} doesn't exist in the database.");
                 return NotFound();
             }
+
             _repository.Company.DeleteCompany(company);
             _repository.Save();
 
@@ -135,6 +147,13 @@ namespace EidelundEmployees.Controllers
                 _logger.LogError("CompanyForUpdateDto object sent from client is null.");
                 return BadRequest("CompanyForUpdateDto object is null");
             }
+
+            if (!ModelState.IsValid)
+            {
+                _logger.LogError("Invalid model state for the CompanyForUpdateDto object");
+                return UnprocessableEntity(ModelState);
+            }
+
             var companyEntity = _repository.Company.GetCompany(id, trackChanges: true);
             if (companyEntity == null)
             {
@@ -144,8 +163,8 @@ namespace EidelundEmployees.Controllers
 
             _mapper.Map(company, companyEntity);
             _repository.Save();
+
             return NoContent();
         }
-
     }
 }
