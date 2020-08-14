@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CompanyEmployees.ActionFilters
+namespace EidelundEmployees.ActionFilters
 {
     public class ValidateEmployeeForCompanyExistsAttribute : IAsyncActionFilter
     {

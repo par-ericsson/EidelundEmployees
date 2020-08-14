@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
-namespace CompanyEmployees.ModelBinders
+namespace EidelundEmployees.ModelBinders
 {
     public class ArrayModelBinder : IModelBinder
     {

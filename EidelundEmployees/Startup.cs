@@ -4,9 +4,10 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using CompanyEmployees.ActionFilters;
+using EidelundEmployees.ActionFilters;
 using Contracts;
 using EidelundEmployees.Extensions;
+using EidelundEmployees.Utilitity;
 using Entities.DataTransferObjects;
 using LoggerService;
 using Microsoft.AspNetCore.Builder;
@@ -54,6 +55,10 @@ namespace EidelundEmployees
             }).AddNewtonsoftJson()
                .AddXmlDataContractSerializerFormatters()
                .AddCustomCSVFormatter();
+
+            services.AddCustomMediaTypes();
+            services.AddScoped<ValidateMediaTypeAttribute>();
+            services.AddScoped<EmployeeLinks>();
 
             services.Configure<ApiBehaviorOptions>(options =>
             {

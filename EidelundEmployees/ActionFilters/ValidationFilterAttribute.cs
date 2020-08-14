@@ -6,7 +6,7 @@ using LoggerService;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace CompanyEmployees.ActionFilters
+namespace EidelundEmployees.ActionFilters
 {
     public class ValidationFilterAttribute : IActionFilter
     {

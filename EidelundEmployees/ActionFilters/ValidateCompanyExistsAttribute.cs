@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using System;
 using System.Threading.Tasks;
 
-namespace CompanyEmployees.ActionFilters
+namespace EidelundEmployees.ActionFilters
 {
     public class ValidateCompanyExistsAttribute : IAsyncActionFilter
     {

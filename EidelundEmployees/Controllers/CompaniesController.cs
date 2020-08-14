@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using CompanyEmployees.ActionFilters;
-using CompanyEmployees.ModelBinders;
+using EidelundEmployees.ActionFilters;
+using EidelundEmployees.ModelBinders;
 using Contracts;
 using Entities.DataTransferObjects;
 using Entities.Models;
@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CompanyEmployees.Controllers
+namespace EidelundEmployees.Controllers
 {
     [Route("api/companies")]
     [ApiController]
