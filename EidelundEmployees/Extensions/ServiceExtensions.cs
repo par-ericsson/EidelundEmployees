@@ -45,14 +45,15 @@ namespace EidelundEmployees.Extensions
                 {
                     newtonsoftJsonOutputFormatter
                     .SupportedMediaTypes
-                    .Add("application/vnd.codemaze.hateoas+json");
+                    .Add("application/eidelund.hateoas+json");
+                    newtonsoftJsonOutputFormatter.SupportedMediaTypes.Add("application/eidelund.apiroot+json");
                 }
                 var xmlOutputFormatter = config.OutputFormatters.OfType<XmlDataContractSerializerOutputFormatter>()?.FirstOrDefault();
                 if (xmlOutputFormatter != null)
                 {
                     xmlOutputFormatter
                     .SupportedMediaTypes
-                    .Add("application/vnd.codemaze.hateoas+xml");
+                    .Add("application/eidelund.hateoas+xml");
                 }
             });
         }
